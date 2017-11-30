@@ -1,12 +1,12 @@
-for answer = 1 : 6 : 7
+for answer = 2 : 2
     clearvars -except answer
     % load('C:\Users\ansartm\Desktop\New folder\BaseEMU\sample input data file\Family1Child.mat')
     
     projectpath = genpath(pwd);
     addpath(projectpath);
-    % load('C:\Users\ansartm\Desktop\New folder\BaseEMU\sample input data file\Family1Child.mat')
-    load('\\d\dfs\groups\itet\eeh\psl\stud\ansartm\public\New folder\BaseEMU\sample input data file\Noise_generated.mat')
-    % rho = 10  gives min. ratio of privacy over regularisation term of 10
+
+%     load('\\d\dfs\groups\itet\eeh\psl\stud\ansartm\public\New folder\BaseEMU\sample input data file\Noise_generated.mat')
+    load('C:\Users\matan\polybox\sample input data file\Noise_generated.mat')
     
     %                      mu          cost      rho        gamma   battsize(kWh)
     
@@ -88,7 +88,7 @@ for answer = 1 : 6 : 7
     Out = size(SimSettings(:,1));
     
     
-    cd('\\d\dfs\groups\itet\eeh\psl\stud\ansartm\public\New folder\BaseEMU\');
+    cd('C:\Users\matan\polybox\');
     folder = 'TOOOOOOOOOOOOOOOOOOOOOOUT petit test_'; %T12 @ 30 min = 24 Step
     k = datestr(now,'dd-mmm-yyyy HH.MM.SS');
     str = int2str(answer);
@@ -141,12 +141,3 @@ for answer = 1 : 6 : 7
     end
     
 end
-%
-%     mailme('jx.chin@gmail.com',folder);
-%     Hibernate
-%
-%   rmpath(genpath('C:\APPS\IBM\ILOG\CPLEX_Studio1263_x64\cplex\matlab/x64_win64'),...
-%    'C:\polybox\Base EMU');
-
-%     pause(600);
-%     MultiRunQueue;

@@ -82,12 +82,12 @@ P_battD = sdpvar(NumOut,1);
 E_grid= sdpvar(NumOut,1);
 
 %%% CPlex 12.6.3
-options = sdpsettings('solver','CPlex','verbose',1,'showprogress',1,'cplex.solutiontarget',3, 'cplex.mip.display', 'on', 'saveyalmipmodel', 1,...
-    'savesolveroutput',1, 'cplex.exportmodel', strcat(TestName,'.sav'));
+% options = sdpsettings('solver','CPlex','verbose',1,'showprogress',1,'cplex.solutiontarget',3, 'cplex.mip.display', 'on', 'saveyalmipmodel', 1,...
+%     'savesolveroutput',1, 'cplex.exportmodel', strcat(TestName,'.sav'));
 
 %%% Gurobi
-% options = sdpsettings('solver','Gurobi','verbose',1,'showprogress',1,'cplex.solutiontarget',3, 'cplex.mip.display', 'on', 'saveyalmipmodel', 1,...
-%     'savesolveroutput',1, 'cplex.exportmodel', strcat(TestName,'.sav'));
+model=gurobi.Model('model');
+options = sdpsettings('solver','Gurobi','verbose',1,'showprogress',1,'saveyalmipmodel',1,'savesolveroutput',1,gurobi_write(model,strcat(TestName,'.lps')));
 
 %%% parameters of yalmip %%%
 %verbose
