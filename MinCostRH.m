@@ -1,15 +1,3 @@
-% clear all
-% clc
-
-%global Time
-
-% load('Family1Child.mat');
-% TestName = 'mu 100, hourly window';
-
-% cd('C:\Users\jchin\polybox\Test EMU\IEEE Trans Data\');
-% mkdir(TestName);
-% cd(TestName);
-%
 % diary (strcat(TestName,'.txt'));
 % diary on;
 
@@ -32,7 +20,7 @@ BattEffC = 1 - 0.04; % Charge losses
 Interval = 60; %minutes
 Horizon = 12/24; %day, optimisation horizon 12 default
 NumOut = Horizon*24*60/Interval; % Optimisation Prediction Horizon T
-Period = 30; %Number of days that is being investigated 30
+Period = 1; %Number of days that is being investigated 30
 
 TimeStep = Interval*60/3600; %to convert values to kWh
 
@@ -254,7 +242,7 @@ for act = 1 :  round(Period*24*60/Interval)
     disp(act);
     % change of environnement sense from ReadOption = 1 to ReadOption =
     % answer in order to change value outputs if we consider noises or no
-    [P_pv, E_load, cost] = EnvironmentSense(answer, P_pv, E_load, cost, PVInput, LoadInput, CostInput, StartTime, act, NumOut, Interval);
+    [P_pv, E_load, cost] = EnvironmentSense(answer, P_pv, E_load, cost, PVInput, LoadInput, Forecast, CostInput, StartTime, act, NumOut, Interval);
     ControllerBase2; %Default
     CPlexOut(act) = sol;
     

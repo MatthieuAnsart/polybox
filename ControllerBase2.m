@@ -30,8 +30,7 @@ bound(1) = - 0.0000009;
 constraints = [ 0 <= E_batt <= BattCap,...
     0 <= P_battD <= BattLimD*(1-BattOp),...
     0 <= P_battC <= BattLimC*BattOp,...
-    E_grid == (E_load - P_battD*TimeStep + P_battC*TimeStep - P_pv*TimeStep),...  %%%%% E_load est def dans environnement sense et
-    %     appel? dans MinCostRH juste avant controllerbase
+    E_grid == (E_load - P_battD*TimeStep + P_battC*TimeStep - P_pv*TimeStep),...
     E_batt(1) == P_act(act,5),... % initial battery value
     ];
 
@@ -52,19 +51,13 @@ for t = 1 : NumOut
     
 end
 
-%     ObjectiveFun = CostOn*ObjectiveFun;
-
 if act == 1
     ObjectiveFun = (1/NumOut)*ObjectiveFun + ...
         mu*PrivacyFuncBase2(1, xcount, ycountrec, xycountrec, xycountc, N_window, m, n, err1, err2, err3);
 else
-%     ObjectiveFun = (1/NumOut)*ObjectiveFun + ...
-%         mu * (PrivacyFuncBase2(1, xcount, ycountrec, xycountrec, xycountc, N_window, m, n, err1, err2, err3) + ...
-%         DeviationPenalty(gamma, rho, P_out(2:NumOut,6,act-1), E_load(1:NumOut-1), P_out(2:NumOut, 7,act-1), P_pv(1:NumOut-1), ...
-%         P_out(2:NumOut,4,act-1), (P_battC(1:NumOut-1)-P_battD(1:NumOut-1)), NumOut));
     ObjectiveFun = (1/NumOut)*ObjectiveFun + ...
         mu * (PrivacyFuncBase2(1, xcount, ycountrec, xycountrec, xycountc, N_window, m, n, err1, err2, err3) + ...
-        DeviationPenalty(gamma, rho, P_out(2:NumOut,6,act-1), loadInput(act : act + NumOut - 1), P_out(2:NumOut, 7,act-1), P_pv(1:NumOut-1), ...
+        DeviationPenalty(gamma, rho, P_out(2:NumOut,6,act-1), LoadInput(act : act + NumOut - 2), P_out(2:NumOut, 7,act-1), P_pv(1:NumOut-1), ...
         P_out(2:NumOut,4,act-1), (P_battC(1:NumOut-1)-P_battD(1:NumOut-1)), NumOut));
 end
 
@@ -122,30 +115,69 @@ P_out(1:NumOut,5,act) = double(E_batt(1:NumOut));
 P_act(act,1) = act;
 
 %2 = E_grid
-% P_act(act,2) = round(P_out(1,1,act),6);   % Needs to be revised if predictions ~= realisations
-P_act(act,2) = LoadInput(act : act + NumOut - 1) - double(P_battD(:))*TimeStep + double(P_battC(:))*TimeStep - P_pv(:)*TimeStep;
+%Load plus batterie trop grand
+if LoadInput(act) - double(P_battD(1))*TimeStep + double(P_battC(1))*TimeStep - P_pv(1)*TimeStep > LoadMax
+    P_act(act,2) = LoadMax;
+%load plus baterie trop petit
+elseif LoadInput(act) - double(P_battD(1))*TimeStep + double(P_battC(1))*TimeStep - P_pv(1)*TimeStep < 0
+    P_act(act,2) = 0 ;
+%classique
+else
+    P_act(act,2) = LoadInput(act) - double(P_battD(1))*TimeStep + double(P_battC(1))*TimeStep - P_pv(1)*TimeStep;
+end
 
 % 3 = E_load
-P_act(act,3) = E_load(:);
+P_act(act,3) = LoadInput(act);
 
 %4 = Consolidated Battery Power
-P_act(act,4) = P_out(1,4,act);
-% P_act(act,4) = P_out(1,3,act) - P_out(1,2,act);
+
+% modif batt = charge - decharge (dans la mesure du possible avec le load
+% max)
+
+% Load major?, modification de la batterie vaut diff entre le load max et
+% le vrai load
+if P_act(act,2) == LoadMax
+    P_act(act,4) = P_act(act,2) - LoadInput(act) + P_pv(1)*TimeStep;
+% Load minor?, modification de la batterie vaut diff entre le load max et
+% le vrai load
+elseif P_act(act,2) == 0
+    P_act(act,4) = P_act(act,2) - LoadInput(act) + P_pv(1)*TimeStep;
+%modif batt egale a charge - decharge
+else
+    P_act(act,4) = P_out(1,4,act);
+end
+
 
 % 5 = Battery State
 if act < round(Period*24*60/Interval)
-    
-    P_act(act+1,5) = round(P_act(act,5) - BattEffD*P_out(1,2,act)*TimeStep + BattEffC*P_out(1,3,act)*TimeStep,6);
-    
-    if P_act(act+1,5) < 0
-        fprintf('\nNext Time Step Battery State (Pre-Round):')
-        disp(P_act(act+1,5));
-        P_act(act+1,5) = round(P_act(act+1,5),5);
+% on regarde si on ne depasse la capacite de la batterie
+% batt (t+1) = decharge + charge + batt(t)
+% on considere dans ce cas que la decharge a la bonne valeur et on ampute
+% la difference sur la charge (logique physique, la batterie peut toujours se decharger mais pas se charger)
+    if - BattEffD*P_out(1,2,act)*TimeStep + (P_act(act,4)+P_out(1,2,act))*BattEffC*TimeStep + P_act(act,5)  >= BattCap
+        P_act(act+1,5) = BattCap;
+% on regarde si on ne demande pas a la bateerie de se vider en deca de 0
+% batt (t+1) = decharge + charge + batt(t)
+% on considere dans ce cas que la charge a la bonne valeur et on ampute la
+% difference sur la decharge (logique physique, la batterie peut toujours
+% se decharger mais pas se charger)
+    elseif BattEffC*P_out(1,3,act)*TimeStep + (-P_act(act,4)+P_out(1,3,act))*BattEffD*TimeStep + P_act(act,5) <= 0
+        P_act(act+1,5) = 0;
+    else
+        P_act(act+1,5) = round(P_act(act,5) - BattEffD*P_out(1,2,act)*TimeStep + BattEffC*P_out(1,3,act)*TimeStep,6);
     end
+    
+%     if P_act(act+1,5) < 0
+%         fprintf('\nNext Time Step Battery State (Pre-Round):')
+%         disp(P_act(act+1,5));
+%         P_act(act+1,5) = round(P_act(act+1,5),5);
+%     end
     
 end
 
 %% Privacy Sanity Check %%
+
+%%% useless because we consider noisy forecasts%%%
 fprintf('\n****************************************************************************\n ');
 fprintf('\nStep I(Y;X): ');
 
@@ -162,28 +194,11 @@ fprintf('\nStep I(Y;X)_obj: ');
 PFunc = PrivacyFuncBase2(1, xcount, ycountrec, xycountrec, value(xycountc), N_window, m, n, err1, err2, err3);
 disp(PFunc);
 
-%%%%%%%%%%%%
-%     assert(PrivacyEval(xycountrec+value(xycountc), xcount, value(ycount), N_window, m, n, err1, err2, err3)...
-%         == value(PrivacyEval(xycountrec+value(xycountc), xcount, ycount, N_window, m, n, err1, err2, err3)),...
-%             'Privacy Evaluation Error');
-%
-%     assert(round(PrivacyFuncBase2(1, xcount, ycountrec, xycountrec, value(xycountc), N_window, m, n, err1, err2, err3),8)...
-%         == round(value(PrivacyFuncBase2(1, xcount, ycountrec, xycountrec, xycountc, N_window, m, n, err1, err2, err3)),8),...
-%             'Privacy Function Error');
-%%%%%%%%%%%%
-
 % bins cannot be reextracted due to the small delta that was imposed as
 % a constraint for strictly less than unless we make a hack
 
-
 % 7 = I(Y;X)_obj
 P_act(act,7) = value(PFunc);
-
-% clear PFunc ycount;
-
-%figure();
-%XYPlot(1,value(xycountc)+ xycountrec,m,n);
-
 %% History Update %%
 
 % Remove last value
@@ -191,25 +206,9 @@ xycountrec(xhist(1,1),yhist(1,1)) = xycountrec(xhist(1,1),yhist(1,1)) - 1;
 ycountec(yhist(1,1),1) = ycountrec(yhist(1,1),1) - 1;
 xcountrec(xhist(1,1),1) = xcountrec(xhist(1,1),1) - 1;
 
-% for i = 1:n
-%
-%     if round(value(Z_ijt(1,i))) == 1
-%         y_controller(act) = i;
-%         break;
-%     end
-% end
-
-
-% %Add latest value
-% if P_act(act,2) > ybinsize * n
-%     P_act(act,2) = ybinsize * n;
-% end
-
 %Add latest value
 tempx = binx(LoadInput(act + StartTime - 1), xbinsize, m);
 tempy = binx(P_act(act,2), ybinsize, n); % use this if x is not perfectly known
-% tempy = y_controller(act);      % only true for perfect prediction case
-
 
 xycountrec(tempx,tempy) = xycountrec(tempx,tempy) + 1;
 ycountrec(tempy,1) = ycountrec(tempy,1) + 1;
@@ -278,5 +277,3 @@ fprintf('\n*********************************************************************
 
 Z_ijtHist(:,:,act) = value(Z_ijt);
 xycountc_store(:,:,act) = value(xycountc);
-
-% clear xycountc tempx tempy temphist;

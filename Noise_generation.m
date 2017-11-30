@@ -20,8 +20,13 @@ Noise_7 = zeros(length(LoadInput)-NumOut,NumOut); % growing sigma
  
 Load = LoadInput;
 
-sig2 = var(LoadInput) ; % constant sigma
-sig3 = var(LoadInput) ; % for growing sigma 
+
+sig2 = 0.1 ; 
+sig3 = 0.1 ;
+
+
+% sig2 = var(LoadInput) ; % constant sigma
+% sig3 = var(LoadInput) ; % for growing sigma 
 % sig = std(LoadInput) ; % standard deviation of original value
 % m = mean (LoadInput) ; % average of original values
  
@@ -147,4 +152,4 @@ for k = 1 : length(LoadInput)-NumOut
     end
 end
 
-save('Noise_generated','CostInput','Time','PVInput','Perfect_forecast','Noise_2','Noise_3','Noise_6','Noise_7');
+save('Noise_generated','CostInput','Time','PVInput','Perfect_forecast','Noise_2','Noise_3','Noise_6','Noise_7','LoadInput');

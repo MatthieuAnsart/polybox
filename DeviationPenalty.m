@@ -5,7 +5,7 @@ function Penalty = DeviationPenalty(gamma, rho, LoadPrev, LoadNow, PVPrev, PVNow
 %         P_out(2:NumOut,4,act-1), (P_battC(1:NumOut-1)-P_battD(1:NumOut-1)), NumOut))
 
 %%% when it is called (NOW)
-% DeviationPenalty(gamma, rho, P_out(2:NumOut,6,act-1), loadInput(act : act + NumOut - 1), P_out(2:NumOut, 7,act-1), P_pv(1:NumOut-1), ...
+% DeviationPenalty(gamma, rho, P_out(2:NumOut,6,act-1), LoadInput(act : act + NumOut - 2), P_out(2:NumOut, 7,act-1), P_pv(1:NumOut-1), ...
 %     P_out(2:NumOut,4,act-1), (P_battC(1:NumOut-1)-P_battD(1:NumOut-1)), NumOut));
 
 

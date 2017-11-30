@@ -1,5 +1,4 @@
-
-for answer = 7 : 7 
+for answer = 1 : 6 : 7
     clearvars -except answer
     % load('C:\Users\ansartm\Desktop\New folder\BaseEMU\sample input data file\Family1Child.mat')
     
@@ -16,7 +15,7 @@ for answer = 7 : 7
 %         2            1       9.1        10000       6.4;
 %         3            1       9.1        10000       6.4;
 %         4            1       9.1        10000       6.4;
-%         5            1       9.1        10000       6.4;
+        5            1       9.1        10000       6.4;
 %         6            1       9.1        10000       6.4;
 %         7            1       9.1        10000       6.4;
 %         8            1       9.1        10000       6.4;
@@ -111,19 +110,10 @@ for answer = 7 : 7
         Forecast = Noise_2;
     elseif answer == 3
         Forecast = Noise_3;
-    elseif answer == 4
-        Forecast = Noise_4;
-    elseif answer == 5
-        Forecast = Noise_5;
     elseif answer == 6
         Forecast = Noise_6;
     elseif answer == 7
-        Forecast = Noise_7;
-    elseif answer == 8
-        Forecast = Noise_8;
-    elseif answer == 9
-        Forecast = Noise_9;
-        
+        Forecast = Noise_7;       
     end
     
     
@@ -145,7 +135,7 @@ for answer = 7 : 7
         
         MinCostRH;
         
-        clearvars -except TestNameStore Run Out SimSettings folder PVInput Time Forecast CostInput;
+        clearvars -except answer TestNameStore Run Out SimSettings folder PVInput Time Forecast LoadInput CostInput;
         %     clc;
         
     end
