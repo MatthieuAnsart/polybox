@@ -16,9 +16,9 @@ function [P_pv E_load cost] = EnvironmentSense(ReadOption, P_pv, E_load, cost, P
 
     
     if ReadOption == 1 % Perfect Prediction with two Tiered Pricing
-        E_load = Perfect_forecast(act + StartTime - 1,:);
+        E_load = Perfect_forecast(act + StartTime - 1,:)';
     else
-        E_load = Forecast(act + StartTime - 1,:);
+        E_load = Forecast(act + StartTime - 1,:)';
     end
     
 end

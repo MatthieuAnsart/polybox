@@ -6,7 +6,7 @@ for answer = 2 : 2
     addpath(projectpath);
 
 %     load('\\d\dfs\groups\itet\eeh\psl\stud\ansartm\public\New folder\BaseEMU\sample input data file\Noise_generated.mat')
-    load('C:\Users\matan\polybox\sample input data file\Noise_generated.mat')
+    load('/cluster/home/ansartm/polybox/sample input data file/Noise_generated.mat')
     
     %                      mu          cost      rho        gamma   battsize(kWh)
     
@@ -88,7 +88,7 @@ for answer = 2 : 2
     Out = size(SimSettings(:,1));
     
     
-    cd('C:\Users\matan\polybox\');
+    cd('/cluster/home/ansartm/polybox/');
     folder = 'TOOOOOOOOOOOOOOOOOOOOOOUT petit test_'; %T12 @ 30 min = 24 Step
     k = datestr(now,'dd-mmm-yyyy HH.MM.SS');
     str = int2str(answer);
@@ -96,8 +96,8 @@ for answer = 2 : 2
     cd(strcat('Noise_',str, '__',folder,'_mu =', num2str(SimSettings(1,1)) , '__', k));
     clear k;
     
-    xlswrite('OutputCompilation.xlsx', {folder}, 'Data', '2');
-    xlswrite('OutputCompilation.xlsx', {'gamma' , 'Total Grid Energy (kWh)', 'Total Cost (SFr)' , ...
+    xlswrite('OutputCompilation.csv', {folder}, 'Data', '2');
+    xlswrite('OutputCompilation.csv', {'gamma' , 'Total Grid Energy (kWh)', 'Total Cost (SFr)' , ...
         'Time Average Step I(Y;X)' , 'Time Average Step I(Y;X)_obj' , 'Time Average I(Y;X)' , ...
         'Cumulative I(Y;X)', 'Max abs(I(Y;X)-I(Y;X)_obj)','Cost', 'BattCap', 'rho', 'gamma'}, 'Data', '3');
     

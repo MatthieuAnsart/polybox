@@ -86,8 +86,7 @@ E_grid= sdpvar(NumOut,1);
 %     'savesolveroutput',1, 'cplex.exportmodel', strcat(TestName,'.sav'));
 
 %%% Gurobi
-model=gurobi.Model('model');
-options = sdpsettings('solver','Gurobi','verbose',1,'showprogress',1,'saveyalmipmodel',1,'savesolveroutput',1,gurobi_write(model,strcat(TestName,'.lps')));
+options = sdpsettings('solver','Gurobi','verbose',1,'showprogress',1,'saveyalmipmodel',1,'savesolveroutput',1);
 
 %%% parameters of yalmip %%%
 %verbose
@@ -247,8 +246,8 @@ for act = 1 :  round(Period*24*60/Interval)
     CPlexOut(act) = sol;
     
     if act == 1
-        options = sdpsettings('solver','CPlex','verbose',1,'showprogress',1,'cplex.solutiontarget',3, 'cplex.mip.display', 'on', 'saveyalmipmodel', 1,...
-            'savesolveroutput',1);
+        options = sdpsettings('solver','Gurobi','verbose',1,'showprogress',1, 'saveyalmipmodel', 1,...
+            'savesolveroutput',1,GRBnewmodel(env,model,'model'));
     end
     
 end
@@ -271,7 +270,7 @@ PeriodStart = 1;
 PeriodEnd = Period*24*60/Interval;
 A = [mu, sum(P_act(PeriodStart:PeriodEnd,2)), CostCalc(PeriodStart,PeriodEnd,P_act(:,2),CostRec(:))/100 , ...
     mean(P_act(:,6)), mean(P_act(:,7)), mean(P_act(:,8)), P_act(act,9), max(abs(P_act(:,6)-P_act(:,7))),CostOn, BattCap, rho, gamma] ;
-xlswrite('OutputCompilation.xlsx', A, 'Data', num2str(Run+3)); %Run + 3 default...
+xlswrite('OutputCompilation.csv', A, 'Data', num2str(Run+3)); %Run + 3 default...
 clear A
 
 %   P_out(1,96,:) %to view the optimisation results of a certain time step
