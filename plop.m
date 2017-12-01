@@ -1,7 +1,9 @@
-% cd('\\d\dfs\groups\itet\eeh\psl\stud\ansartm\public\New folder\BaseEMU')
+function [answer,sig] = plop(answer,sig)
 cd ('/cluster/home/ansartm/polybox/')
 
-clear all
-clc
+answer = answer;
+sig = sig;
 
 MultiRun
+end
+

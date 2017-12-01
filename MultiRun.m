@@ -1,12 +1,10 @@
-for answer = 2:2
-    clearvars -except answer
-    % load('C:\Users\ansartm\Desktop\New folder\BaseEMU\sample input data file\Family1Child.mat')
     
     projectpath = genpath(pwd);
     addpath(projectpath);
+sigma = num2str(sig,2)
 
 %     load('\\d\dfs\groups\itet\eeh\psl\stud\ansartm\public\New folder\BaseEMU\sample input data file\Noise_generated.mat')
-    load('/cluster/home/ansartm/polybox/sample_input_data_file/Noise_generated_sig_0.1.mat')
+    load(strcat('/cluster/home/ansartm/polybox/sample_input_data_file/Noise_generated_sig_',sigma,'.mat'))
     
     %                      mu          cost      rho        gamma   battsize(kWh)
     
