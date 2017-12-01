@@ -86,7 +86,11 @@ E_grid= sdpvar(NumOut,1);
 %     'savesolveroutput',1, 'cplex.exportmodel', strcat(TestName,'.sav'));
 
 %%% Gurobi
-options = sdpsettings('solver','gurobi','verbose',1,'showprogress',1,'saveyalmipmodel',1,'savesolveroutput',1);
+
+options = sdpsettings('solver','Gurobi','verbose',1,'showprogress',1,'saveyalmipmodel',1,'savesolveroutput',1);
+options.gurobi.TimeLimit=2;
+
+
 
 %%% parameters of yalmip %%%
 %verbose
@@ -243,11 +247,11 @@ for act = 1 :  round(Period*24*60/Interval)
     % answer in order to change value outputs if we consider noises or no
     [P_pv, E_load, cost] = EnvironmentSense(answer, P_pv, E_load, cost, PVInput, LoadInput, Forecast, CostInput, StartTime, act, NumOut, Interval);
     ControllerBase2; %Default
-    CPlexOut(act) = sol;
+    GurobiOut(act) = sol;
     
     if act == 1
-        options = sdpsettings('solver','gurobi','verbose',1,'showprogress',1, 'saveyalmipmodel', 1,...
-            'savesolveroutput',1);
+        options = sdpsettings('solver','gurobi','verbose',1,'showprogress',1, 'saveyalmipmodel', 1, 'savesolveroutput',1);
+	options.gurobi.TimeLimit=2;
     end
     
 end
