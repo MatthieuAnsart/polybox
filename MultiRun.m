@@ -1,4 +1,4 @@
-for answer = 2 : 2
+for answer = 2:2
     clearvars -except answer
     % load('C:\Users\ansartm\Desktop\New folder\BaseEMU\sample input data file\Family1Child.mat')
     
@@ -6,21 +6,21 @@ for answer = 2 : 2
     addpath(projectpath);
 
 %     load('\\d\dfs\groups\itet\eeh\psl\stud\ansartm\public\New folder\BaseEMU\sample input data file\Noise_generated.mat')
-    load('/cluster/home/ansartm/polybox/sample input data file/Noise_generated.mat')
+    load('/cluster/home/ansartm/polybox/sample_input_data_file/Noise_generated_sig_0.1.mat')
     
     %                      mu          cost      rho        gamma   battsize(kWh)
     
     SimSettings = [    %     0            1       9.1        10000       6.4;
-%         1            1       9.1        10000       6.4;
-%         2            1       9.1        10000       6.4;
+         1            1       9.1        10000       6.4;
+         2            1       9.1        10000       6.4;
 %         3            1       9.1        10000       6.4;
 %         4            1       9.1        10000       6.4;
-        5            1       9.1        10000       6.4;
+%         5            1       9.1        10000       6.4;
 %         6            1       9.1        10000       6.4;
 %         7            1       9.1        10000       6.4;
 %         8            1       9.1        10000       6.4;
 %         9            1       9.1        10000       6.4;
-        10           1       9.1        10000       6.4;
+%         10           1       9.1        10000       6.4;
 %         12           1       9.1        10000       6.4;
 %         14           1       9.1        10000       6.4;
 %         15           1       9.1        10000       6.4;
@@ -89,11 +89,11 @@ for answer = 2 : 2
     
     
     cd('/cluster/home/ansartm/polybox/');
-    folder = 'TOOOOOOOOOOOOOOOOOOOOOOUT petit test_'; %T12 @ 30 min = 24 Step
+    folder = 'Test mu_sig 0.1_'; %T12 @ 30 min = 24 Step
     k = datestr(now,'dd-mmm-yyyy HH.MM.SS');
     str = int2str(answer);
-    mkdir(strcat('Noise_',str, '__',folder,'_mu =', num2str(SimSettings(1,1)) , '__', k));
-    cd(strcat('Noise_',str, '__',folder,'_mu =', num2str(SimSettings(1,1)) , '__', k));
+    mkdir(strcat('Noise_',str, '__',folder, '__', k));
+    cd(strcat('Noise_',str, '__',folder , '__', k));
     clear k;
     
     xlswrite('OutputCompilation.csv', {folder}, 'Data', '2');

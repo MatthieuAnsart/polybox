@@ -20,7 +20,7 @@ BattEffC = 1 - 0.04; % Charge losses
 Interval = 60; %minutes
 Horizon = 12/24; %day, optimisation horizon 12 default
 NumOut = Horizon*24*60/Interval; % Optimisation Prediction Horizon T
-Period = 1; %Number of days that is being investigated 30
+Period = 2; %Number of days that is being investigated 30
 
 TimeStep = Interval*60/3600; %to convert values to kWh
 
@@ -86,7 +86,7 @@ E_grid= sdpvar(NumOut,1);
 %     'savesolveroutput',1, 'cplex.exportmodel', strcat(TestName,'.sav'));
 
 %%% Gurobi
-options = sdpsettings('solver','Gurobi','verbose',1,'showprogress',1,'saveyalmipmodel',1,'savesolveroutput',1);
+options = sdpsettings('solver','gurobi','verbose',1,'showprogress',1,'saveyalmipmodel',1,'savesolveroutput',1);
 
 %%% parameters of yalmip %%%
 %verbose
@@ -246,8 +246,8 @@ for act = 1 :  round(Period*24*60/Interval)
     CPlexOut(act) = sol;
     
     if act == 1
-        options = sdpsettings('solver','Gurobi','verbose',1,'showprogress',1, 'saveyalmipmodel', 1,...
-            'savesolveroutput',1,GRBnewmodel(env,model,'model'));
+        options = sdpsettings('solver','gurobi','verbose',1,'showprogress',1, 'saveyalmipmodel', 1,...
+            'savesolveroutput',1);
     end
     
 end
