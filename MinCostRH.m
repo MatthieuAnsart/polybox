@@ -20,7 +20,7 @@ BattEffC = 1 - 0.04; % Charge losses
 Interval = 60; %minutes
 Horizon = 12/24; %day, optimisation horizon 12 default
 NumOut = Horizon*24*60/Interval; % Optimisation Prediction Horizon T
-Period = 2; %Number of days that is being investigated 30
+Period = 30; %Number of days that is being investigated 30
 
 TimeStep = Interval*60/3600; %to convert values to kWh
 
@@ -87,7 +87,7 @@ E_grid= sdpvar(NumOut,1);
 
 %%% Gurobi
 
-options = sdpsettings('solver','Gurobi','verbose',1,'showprogress',1,'saveyalmipmodel',1,'savesolveroutput',1);
+options = sdpsettings('solver','Gurobi','verbose',0,'showprogress',0,'saveyalmipmodel',1,'savesolveroutput',1);
 options.gurobi.TimeLimit=2;
 
 
@@ -250,8 +250,8 @@ for act = 1 :  round(Period*24*60/Interval)
     GurobiOut(act) = sol;
     
     if act == 1
-        options = sdpsettings('solver','gurobi','verbose',1,'showprogress',1, 'saveyalmipmodel', 1, 'savesolveroutput',1);
-	options.gurobi.TimeLimit=2;
+        options = sdpsettings('solver','gurobi','verbose',0,'showprogress',0, 'saveyalmipmodel', 1, 'savesolveroutput',1);
+	options.gurobi.TimeLimit = 2;
     end
     
 end
@@ -274,7 +274,7 @@ PeriodStart = 1;
 PeriodEnd = Period*24*60/Interval;
 A = [mu, sum(P_act(PeriodStart:PeriodEnd,2)), CostCalc(PeriodStart,PeriodEnd,P_act(:,2),CostRec(:))/100 , ...
     mean(P_act(:,6)), mean(P_act(:,7)), mean(P_act(:,8)), P_act(act,9), max(abs(P_act(:,6)-P_act(:,7))),CostOn, BattCap, rho, gamma] ;
-csvwrite('OutputCompilation.csv', A, 'Data', num2str(Run+3)); %Run + 3 default...
+xlswrite('OutputCompilation.csv', A, 'Data', num2str(Run+3)); %Run + 3 default...
 clear A
 
 %   P_out(1,96,:) %to view the optimisation results of a certain time step
