@@ -57,7 +57,7 @@ for i = 1 : N
             clearvars -except listSubfolder N L list results_1 results_2 results_3 results_6 results_7 p i Number_1 Number_2 Number_3 Number_6 Number_7 PeriodEnd
         end
     end
-    cd ('..')
+    cd ('/cluster/home/ansartm/polybox/results_test_mu')
 end
 
 %on classe par rapport a la premiere colonne (mu)
